@@ -6,6 +6,50 @@ import path from 'path';
 
 const router = express.Router();
 
+// Função para formatar cookies do YouTube
+function formatarCookies(cookiesRaw) {
+    try {
+        // Se já for uma string formatada, retornar como está
+        if (typeof cookiesRaw === 'string') {
+            return cookiesRaw;
+        }
+
+        // Converter texto bruto em linhas
+        const linhas = cookiesRaw.split('\n');
+        
+        // Cookies importantes do YouTube
+        const cookiesImportantes = [
+            'HSID', 'SSID', 'APISID', 'SAPISID', 'LOGIN_INFO', 'PREF',
+            '__Secure-1PAPISID', '__Secure-3PAPISID', 'SID',
+            '__Secure-1PSID', '__Secure-3PSID', 'SIDCC',
+            '__Secure-1PSIDCC', '__Secure-3PSIDCC'
+        ];
+
+        // Filtrar e formatar cookies
+        const cookiesFormatados = linhas
+            .map(linha => linha.trim())
+            .filter(linha => linha && !linha.startsWith('#'))
+            .map(linha => {
+                const partes = linha.split('\t');
+                if (partes.length >= 2) {
+                    return {
+                        nome: partes[0],
+                        valor: partes[1]
+                    };
+                }
+                return null;
+            })
+            .filter(cookie => cookie && cookiesImportantes.includes(cookie.nome))
+            .map(cookie => `${cookie.nome}=${cookie.valor}`)
+            .join('; ');
+
+        return cookiesFormatados;
+    } catch (erro) {
+        console.error('Erro ao formatar cookies:', erro);
+        return '';
+    }
+}
+
 // Configurações do ytdl para evitar detecção de bot
 const ytdlOptions = {
     requestOptions: {
@@ -101,11 +145,21 @@ router.post('/update-cookies', (req, res) => {
             });
         }
 
+        // Formatar cookies
+        const cookiesFormatados = formatarCookies(cookies);
+        
+        if (!cookiesFormatados) {
+            return res.status(400).json({
+                erro: 'Cookies inválidos',
+                detalhes: 'Não foi possível formatar os cookies fornecidos'
+            });
+        }
+
         // Atualizar cookies nas opções do ytdl
-        ytdlOptions.requestOptions.headers.Cookie = cookies;
+        ytdlOptions.requestOptions.headers.Cookie = cookiesFormatados;
         
         // Atualizar variável de ambiente
-        process.env.YOUTUBE_COOKIES = cookies;
+        process.env.YOUTUBE_COOKIES = cookiesFormatados;
 
         return res.json({
             mensagem: 'Cookies atualizados com sucesso',
