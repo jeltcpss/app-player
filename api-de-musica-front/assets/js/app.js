@@ -4,8 +4,8 @@ const { createApp } = Vue;
 // Array com a ordem das páginas para navegação por gestos
 const PAGE_ORDER = ['home', 'search', 'favorites', 'playlists', 'history'];
 
-const BASE_API_URL = 'https://app-player.onrender.com';
-const USER_ID = '1';
+const BASE_API_URL = 'https://app-player.onrender.com'; //'https://app-player.onrender.com'; // URL da API 
+const USER_ID = '1'; // ID do usuário
 
 
 // Componentes
@@ -2230,7 +2230,7 @@ const app = createApp({
 
             try {
                 // Primeiro cria a playlist
-                const createResponse = await this.fetchWithRetry('http://localhost:3000/users/playlists', {
+                const createResponse = await this.fetchWithRetry(`${BASE_API_URL}/users/playlists`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
