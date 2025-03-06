@@ -198,16 +198,46 @@ async function buscar(termo, limite = 100) {
     }
 }
 
-// Função para verificar se os cookies são válidos
+// Função para autenticação direta com o YouTube
+async function autenticarYouTube() {
+    try {
+        const { Innertube } = await import('@distube/ytdl-core/dist/lib/innertube.js');
+        const youtube = await Innertube.create({
+            cache: new Map(),
+            generate_session_locally: true
+        });
+
+        // Obter credenciais
+        const credentials = await youtube.session.getCredentials();
+        
+        // Atualizar cookies com as credenciais
+        const novoCookie = Object.entries(credentials)
+            .map(([key, value]) => `${key}=${value}`)
+            .join('; ');
+
+        // Salvar cookies
+        salvarCookies(novoCookie);
+        
+        // Atualizar ytdlOptions
+        ytdlOptions.requestOptions.headers.Cookie = novoCookie;
+        process.env.YOUTUBE_COOKIES = novoCookie;
+
+        return true;
+    } catch (erro) {
+        console.error('Erro na autenticação:', erro);
+        return false;
+    }
+}
+
+// Modificar a função verificarCookies para tentar autenticação automática
 async function verificarCookies() {
     try {
-        // Tenta obter informações de um vídeo público do YouTube
-        const videoTeste = 'dQw4w9WgXcQ'; // Video público para teste
+        const videoTeste = 'dQw4w9WgXcQ';
         await ytdl.getBasicInfo(videoTeste, ytdlOptions);
         return true;
     } catch (erro) {
-        console.error('Erro na verificação dos cookies:', erro.message);
-        return false;
+        console.log('Tentando autenticação automática...');
+        return await autenticarYouTube();
     }
 }
 
@@ -249,6 +279,31 @@ router.post('/update-cookies', (req, res) => {
         console.error('Erro ao atualizar cookies:', erro);
         return res.status(500).json({
             erro: 'Erro ao atualizar cookies',
+            detalhes: erro.message
+        });
+    }
+});
+
+// Rota para autenticação direta
+router.post('/auth', async (req, res) => {
+    try {
+        const sucesso = await autenticarYouTube();
+        
+        if (sucesso) {
+            return res.json({
+                mensagem: 'Autenticação realizada com sucesso',
+                detalhes: 'Novas credenciais foram geradas e salvas'
+            });
+        } else {
+            return res.status(401).json({
+                erro: 'Falha na autenticação',
+                detalhes: 'Não foi possível gerar novas credenciais'
+            });
+        }
+    } catch (erro) {
+        console.error('Erro na rota de autenticação:', erro);
+        return res.status(500).json({
+            erro: 'Erro na autenticação',
             detalhes: erro.message
         });
     }
