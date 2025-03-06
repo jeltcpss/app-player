@@ -6,6 +6,37 @@ import path from 'path';
 
 const router = express.Router();
 
+// Caminho para o arquivo de cookies
+const cookiesPath = path.join(process.cwd(), 'cookies.json');
+
+// Função para salvar cookies em arquivo
+function salvarCookies(cookies) {
+    try {
+        fs.writeFileSync(cookiesPath, JSON.stringify({ cookies }, null, 2));
+        console.log('Cookies salvos com sucesso em:', cookiesPath);
+    } catch (erro) {
+        console.error('Erro ao salvar cookies:', erro);
+    }
+}
+
+// Função para carregar cookies do arquivo
+function carregarCookies() {
+    try {
+        if (fs.existsSync(cookiesPath)) {
+            const dados = fs.readFileSync(cookiesPath, 'utf8');
+            const { cookies } = JSON.parse(dados);
+            console.log('Cookies carregados com sucesso de:', cookiesPath);
+            return cookies;
+        }
+    } catch (erro) {
+        console.error('Erro ao carregar cookies:', erro);
+    }
+    return process.env.YOUTUBE_COOKIES || '';
+}
+
+// Carregar cookies ao iniciar
+const cookiesSalvos = carregarCookies();
+
 // Função para formatar cookies do YouTube
 function formatarCookies(cookiesRaw) {
     try {
@@ -81,7 +112,7 @@ const ytdlOptions = {
             'Sec-Fetch-Site': 'none',
             'Sec-Fetch-User': '?1',
             'Upgrade-Insecure-Requests': '1',
-            'Cookie': process.env.YOUTUBE_COOKIES || ''
+            'Cookie': cookiesSalvos
         }
     },
     lang: 'pt-BR'
@@ -180,9 +211,12 @@ router.post('/update-cookies', (req, res) => {
         // Atualizar variável de ambiente
         process.env.YOUTUBE_COOKIES = cookiesFormatados;
 
+        // Salvar cookies em arquivo
+        salvarCookies(cookiesFormatados);
+
         return res.json({
             mensagem: 'Cookies atualizados com sucesso',
-            detalhes: 'Os cookies do YouTube foram atualizados'
+            detalhes: 'Os cookies do YouTube foram atualizados e salvos'
         });
     } catch (erro) {
         console.error('Erro ao atualizar cookies:', erro);

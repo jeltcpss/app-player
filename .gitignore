@@ -29,6 +29,9 @@ build/
 *.swp
 *.swo
 
+# Cookies
+cookies.json
+
 # Outros
 .tmp/
 .temp/ 
