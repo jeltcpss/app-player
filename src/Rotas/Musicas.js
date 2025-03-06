@@ -8,27 +8,18 @@ const router = express.Router();
 const ytdlOptions = {
     requestOptions: {
         headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-            'Accept-Language': 'pt,en;q=0.9,zh-TW;q=0.8,zh-CN;q=0.7,zh;q=0.6',
-            'Accept-Encoding': 'gzip, deflate, br, zstd',
-            'Cache-Control': 'max-age=0',
-            'Sec-Ch-Ua': '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
-            'Sec-Ch-Ua-Mobile': '?0',
-            'Sec-Ch-Ua-Platform': '"Windows"',
-            'Sec-Fetch-Dest': 'document',
-            'Sec-Fetch-Mode': 'navigate',
-            'Sec-Fetch-Site': 'same-origin',
-            'Sec-Fetch-User': '?1',
-            'Upgrade-Insecure-Requests': '1',
-            'Priority': 'u=0, i',
-            'Cookie': 'VISITOR_INFO1_LIVE=6GXM2q1kUyg; PREF=tz=America.Sao_Paulo; VISITOR_PRIVACY_METADATA=CgJCUhIEGgAgPQ%3D%3D'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+            'Accept': '*/*',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Connection': 'keep-alive',
+            'Cookie': 'CONSENT=YES+; SOCS=CAISEwgDEgk1ODE3OTQxMTEaAmVuIAEaBgiA_LyaBg; GPS=1; VISITOR_INFO1_LIVE=JnY1vRGpQtY; YSC=aTaH9uXCiXY',
+            'Referer': 'https://www.youtube.com/',
+            'Origin': 'https://www.youtube.com'
         }
     },
-    lang: 'pt-BR',
-    ipaddr: process.env.RENDER_EXTERNAL_URL ? undefined : '127.0.0.1', // Usar IP local apenas em desenvolvimento
-    geo: 'BR',
-    cookies: true
+    lang: 'en-US',
+    ipAddress: '159.65.160.150', // IP fixo para evitar detecção
+    clientVersion: '2.20240311.01.00'
 };
 
 /**
