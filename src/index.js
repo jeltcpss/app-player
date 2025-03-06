@@ -170,15 +170,14 @@ process.on('unhandledRejection', (reason, promise) => { //tratamento de promessa
 });
 
 // Iniciar o servidor
-const server = app.listen(port, () => { //iniciar o servidor
-    console.log(`API rodando em http://localhost:${port}`); //logar a porta
+app.listen(port, '0.0.0.0', () => {
+    console.log(`API rodando na porta ${port}`);
+    console.log(`URL local: http://localhost:${port}`);
+    console.log(`Ambiente: ${process.env.NODE_ENV || 'development'}`);
 });
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
     console.log('Recebido sinal SIGTERM. Iniciando shutdown graceful...'); //logar o sinal SIGTERM
-    server.close(() => { //encerrar o servidor
-        console.log('Servidor encerrado.'); //logar o encerramento do servidor
-        process.exit(0); //encerrar o processo
-    });
+    process.exit(0); //encerrar o processo
 });
