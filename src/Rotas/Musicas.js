@@ -1,6 +1,8 @@
 import express from 'express';
 import yts from 'yt-search';
 import ytdl from '@distube/ytdl-core';
+import fs from 'fs';
+import path from 'path';
 
 const router = express.Router();
 
@@ -9,17 +11,17 @@ const ytdlOptions = {
     requestOptions: {
         headers: {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-            'Accept': '*/*',
-            'Accept-Language': 'en-US,en;q=0.9',
-            'Connection': 'keep-alive',
-            'Cookie': 'CONSENT=YES+; SOCS=CAISEwgDEgk1ODE3OTQxMTEaAmVuIAEaBgiA_LyaBg; GPS=1; VISITOR_INFO1_LIVE=JnY1vRGpQtY; YSC=aTaH9uXCiXY',
-            'Referer': 'https://www.youtube.com/',
-            'Origin': 'https://www.youtube.com'
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-User': '?1',
+            'Upgrade-Insecure-Requests': '1',
+            'Cookie': process.env.YOUTUBE_COOKIES || ''
         }
     },
-    lang: 'en-US',
-    ipAddress: '159.65.160.150', // IP fixo para evitar detecção
-    clientVersion: '2.20240311.01.00'
+    lang: 'pt-BR'
 };
 
 /**
@@ -87,6 +89,36 @@ async function buscar(termo, limite = 100) {
         return [];
     }
 }
+
+// Rota para atualizar cookies
+router.post('/update-cookies', (req, res) => {
+    try {
+        const { cookies } = req.body;
+        if (!cookies) {
+            return res.status(400).json({
+                erro: 'Cookies não fornecidos',
+                detalhes: 'É necessário fornecer os cookies do YouTube'
+            });
+        }
+
+        // Atualizar cookies nas opções do ytdl
+        ytdlOptions.requestOptions.headers.Cookie = cookies;
+        
+        // Atualizar variável de ambiente
+        process.env.YOUTUBE_COOKIES = cookies;
+
+        return res.json({
+            mensagem: 'Cookies atualizados com sucesso',
+            detalhes: 'Os cookies do YouTube foram atualizados'
+        });
+    } catch (erro) {
+        console.error('Erro ao atualizar cookies:', erro);
+        return res.status(500).json({
+            erro: 'Erro ao atualizar cookies',
+            detalhes: erro.message
+        });
+    }
+});
 
 // Rota unificada para todas as operações de música
 router.post('/', async (req, res) => {
