@@ -3,8 +3,237 @@ import yts from 'yt-search';
 import ytdl from '@distube/ytdl-core';
 import fs from 'fs';
 import path from 'path';
+import puppeteer from 'puppeteer';
 
 const router = express.Router();
+
+// Rota para autenticação do YouTube
+router.get('/auth', (req, res) => {
+    const htmlPage = `
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Login YouTube - App Player</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    max-width: 800px;
+                    margin: 0 auto;
+                    padding: 20px;
+                    background: #f0f0f0;
+                }
+                .container {
+                    background: white;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+                .error {
+                    color: #d32f2f;
+                    background: #ffebee;
+                    padding: 10px;
+                    border-radius: 4px;
+                    margin: 10px 0;
+                    display: none;
+                }
+                .success {
+                    color: #388e3c;
+                    background: #e8f5e9;
+                    padding: 10px;
+                    border-radius: 4px;
+                    margin: 10px 0;
+                    display: none;
+                }
+                button {
+                    background: #1a73e8;
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 16px;
+                }
+                button:hover {
+                    background: #1557b0;
+                }
+                .instructions {
+                    margin-top: 20px;
+                    padding: 15px;
+                    background: #e3f2fd;
+                    border-radius: 4px;
+                }
+                .instructions h3 {
+                    margin-top: 0;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h2>Login YouTube - App Player</h2>
+                <div id="cookieError" class="error">
+                    ⚠️ Os cookies estão desativados no seu navegador. Por favor, ative-os para continuar.
+                </div>
+                <div id="cookieSuccess" class="success">
+                    ✅ Cookies estão ativados! Você pode prosseguir com o login.
+                </div>
+                
+                <div id="loginSection" style="display: none;">
+                    <p>Clique no botão abaixo para fazer login no YouTube:</p>
+                    <button onclick="redirectToYoutube()">Fazer Login no YouTube</button>
+                </div>
+
+                <div class="instructions">
+                    <h3>Como ativar os cookies:</h3>
+                    <p><strong>No Chrome:</strong></p>
+                    <ol>
+                        <li>Clique nos três pontos no canto superior direito</li>
+                        <li>Vá em "Configurações"</li>
+                        <li>Na seção "Privacidade e segurança"</li>
+                        <li>Em "Cookies e outros dados do site"</li>
+                        <li>Selecione "Permitir todos os cookies"</li>
+                    </ol>
+                    <p><strong>Após ativar os cookies, atualize esta página.</strong></p>
+                </div>
+            </div>
+
+            <script>
+                function checkCookies() {
+                    const cookiesEnabled = navigator.cookieEnabled;
+                    const errorDiv = document.getElementById('cookieError');
+                    const successDiv = document.getElementById('cookieSuccess');
+                    const loginSection = document.getElementById('loginSection');
+
+                    if (cookiesEnabled) {
+                        errorDiv.style.display = 'none';
+                        successDiv.style.display = 'block';
+                        loginSection.style.display = 'block';
+                    } else {
+                        errorDiv.style.display = 'block';
+                        successDiv.style.display = 'none';
+                        loginSection.style.display = 'none';
+                    }
+                }
+
+                function redirectToYoutube() {
+                    window.location.href = 'https://accounts.google.com/signin/v2/identifier?service=youtube&uilel=3&passive=true&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Dpt%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252F&hl=pt-BR&ec=65620&flowName=GlifWebSignIn&flowEntry=ServiceLogin';
+                }
+
+                // Verificar cookies ao carregar a página
+                window.onload = checkCookies;
+            </script>
+        </body>
+        </html>
+    `;
+
+    res.send(htmlPage);
+});
+
+// Rota para callback após o login
+router.get('/auth/callback', (req, res) => {
+    // Extrair cookies do cabeçalho da requisição
+    const cookies = req.headers.cookie;
+    
+    if (cookies) {
+        // Atualizar cookies nas opções do ytdl
+        ytdlOptions.requestOptions.headers.Cookie = cookies;
+        process.env.YOUTUBE_COOKIES = cookies;
+
+        const htmlResponse = `
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Login Concluído - App Player</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        max-width: 800px;
+                        margin: 0 auto;
+                        padding: 20px;
+                        background: #f0f0f0;
+                    }
+                    .container {
+                        background: white;
+                        padding: 20px;
+                        border-radius: 8px;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                        text-align: center;
+                    }
+                    .success-icon {
+                        font-size: 48px;
+                        color: #388e3c;
+                        margin-bottom: 20px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="success-icon">✅</div>
+                    <h2>Login Realizado com Sucesso!</h2>
+                    <p>Você pode fechar esta janela e voltar ao App Player.</p>
+                </div>
+            </body>
+            </html>
+        `;
+        res.send(htmlResponse);
+    } else {
+        const errorHtml = `
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Erro no Login - App Player</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        max-width: 800px;
+                        margin: 0 auto;
+                        padding: 20px;
+                        background: #f0f0f0;
+                    }
+                    .container {
+                        background: white;
+                        padding: 20px;
+                        border-radius: 8px;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                        text-align: center;
+                    }
+                    .error-icon {
+                        font-size: 48px;
+                        color: #d32f2f;
+                        margin-bottom: 20px;
+                    }
+                    .retry-button {
+                        background: #1a73e8;
+                        color: white;
+                        border: none;
+                        padding: 10px 20px;
+                        border-radius: 4px;
+                        cursor: pointer;
+                        font-size: 16px;
+                        text-decoration: none;
+                        display: inline-block;
+                        margin-top: 20px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="error-icon">❌</div>
+                    <h2>Falha no Login</h2>
+                    <p>Não foi possível obter os cookies de autenticação.</p>
+                    <a href="/musicas/auth" class="retry-button">Tentar Novamente</a>
+                </div>
+            </body>
+            </html>
+        `;
+        res.status(401).send(errorHtml);
+    }
+});
 
 // Configurações do ytdl para evitar detecção de bot
 const ytdlOptions = {
