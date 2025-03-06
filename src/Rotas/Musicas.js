@@ -14,7 +14,26 @@ function formatarCookies(cookiesRaw) {
             return cookiesRaw;
         }
 
-        // Converter texto bruto em linhas
+        // Se for um array JSON de cookies
+        if (Array.isArray(cookiesRaw)) {
+            // Cookies importantes do YouTube
+            const cookiesImportantes = [
+                'HSID', 'SSID', 'APISID', 'SAPISID', 'LOGIN_INFO', 'PREF',
+                '__Secure-1PAPISID', '__Secure-3PAPISID', 'SID',
+                '__Secure-1PSID', '__Secure-3PSID', 'SIDCC',
+                '__Secure-1PSIDCC', '__Secure-3PSIDCC'
+            ];
+
+            // Filtrar e formatar cookies
+            const cookiesFormatados = cookiesRaw
+                .filter(cookie => cookiesImportantes.includes(cookie.name))
+                .map(cookie => `${cookie.name}=${cookie.value}`)
+                .join('; ');
+
+            return cookiesFormatados;
+        }
+
+        // Se for texto bruto das DevTools
         const linhas = cookiesRaw.split('\n');
         
         // Cookies importantes do YouTube
