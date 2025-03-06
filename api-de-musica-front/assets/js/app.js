@@ -4,7 +4,7 @@ const { createApp } = Vue;
 // Array com a ordem das páginas para navegação por gestos
 const PAGE_ORDER = ['home', 'search', 'favorites', 'playlists', 'history'];
 
-const BASE_API_URL = 'http://localhost:3000'; //'https://app-player.onrender.com';  http://jeffingames.duckdns.org:3000// URL da API 
+const BASE_API_URL = 'https://app-player.onrender.com'; //'http://localhost:3000'; //'https://app-player.onrender.com';  http://jeffingames.duckdns.org:3000// URL da API 
 const USER_ID = '1'; // ID do usuário
 
 
