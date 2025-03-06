@@ -1,50 +1,12 @@
 const { createApp } = Vue;
 
-const API_URLS = [
-    'https://app-player.onrender.com',
-    'http://jeffingames.duckdns.org:3000',
-    'http://localhost:3000',
-    'http://127.0.0.1:3000'
-];
 
 // Array com a ordem das páginas para navegação por gestos
 const PAGE_ORDER = ['home', 'search', 'favorites', 'playlists', 'history'];
 
-let currentApiUrlIndex = 0;
-const BASE_API_URL = API_URLS[currentApiUrlIndex];
+const BASE_API_URL = 'https://app-player.onrender.com';
 const USER_ID = '1';
 
-// Função para tentar próxima URL disponível
-async function tryNextApiUrl() {
-    currentApiUrlIndex = (currentApiUrlIndex + 1) % API_URLS.length;
-    return API_URLS[currentApiUrlIndex];
-}
-
-// Modifica a função fetchWithRetry para usar URLs alternativas
-async function fetchWithRetry(url, options, maxRetries = 3, delayMs = 1000) {
-    let lastError;
-    let currentUrl = url;
-
-    for (let attempt = 0; attempt < maxRetries * API_URLS.length; attempt++) {
-        try {
-            const response = await fetch(currentUrl, options);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response;
-        } catch (error) {
-            lastError = error;
-            console.log(`Tentativa ${attempt + 1} falhou:`, error);
-            
-            // Se falhou, tenta próxima URL
-            const nextUrl = await tryNextApiUrl();
-            currentUrl = url.replace(API_URLS[currentApiUrlIndex], nextUrl);
-            
-            await new Promise(resolve => setTimeout(resolve, delayMs));
-        }
-    }
-    throw lastError;
-}
 
 // Componentes
 const Home = {
