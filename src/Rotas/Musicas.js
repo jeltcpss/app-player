@@ -4,6 +4,23 @@ import ytdl from '@distube/ytdl-core';
 
 const router = express.Router();
 
+// Configurações do ytdl para evitar detecção de bot
+const ytdlOptions = {
+    requestOptions: {
+        headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-User': '?1',
+            'Upgrade-Insecure-Requests': '1'
+        }
+    },
+    lang: 'pt-BR'
+};
+
 /**
  * Formata a duração do vídeo para MM:SS ou HH:MM:SS
  * @param {Object|number} duration Duração do vídeo em segundos ou objeto
@@ -52,7 +69,8 @@ async function buscar(termo, limite = 100) {
     try {
         const resultado = await yts({
             search: termo,
-            pages: Math.ceil(limite / 20)
+            pages: Math.ceil(limite / 20),
+            userAgent: ytdlOptions.requestOptions.headers['User-Agent']
         });
         
         return resultado.videos.slice(0, limite).map(video => ({
@@ -64,6 +82,7 @@ async function buscar(termo, limite = 100) {
             song_url: video.url
         }));
     } catch (erro) {
+        console.error('Erro na busca:', erro);
         return [];
     }
 }
@@ -112,7 +131,7 @@ router.post('/', async (req, res) => {
                     });
                 }
 
-                const videoInfo = await ytdl.getInfo(data.url);
+                const videoInfo = await ytdl.getInfo(data.url, ytdlOptions);
                 const videoFormat = ytdl.chooseFormat(videoInfo.formats, {
                     quality: '18',
                     filter: format => format.container === 'mp4'
@@ -138,7 +157,7 @@ router.post('/', async (req, res) => {
                     });
                 }
 
-                const audioInfo = await ytdl.getInfo(data.url);
+                const audioInfo = await ytdl.getInfo(data.url, ytdlOptions);
                 const audioFormat = ytdl.chooseFormat(audioInfo.formats, {
                     quality: 'highestaudio',
                     filter: 'audioonly'
@@ -164,9 +183,10 @@ router.post('/', async (req, res) => {
                     });
                 }
 
-                const info = await ytdl.getInfo(data.url);
+                const info = await ytdl.getInfo(data.url, ytdlOptions);
                 res.header('Content-Type', 'video/mp4');
                 const video = ytdl(data.url, {
+                    ...ytdlOptions,
                     quality: '18',
                     filter: format => format.container === 'mp4'
                 });
@@ -181,11 +201,12 @@ router.post('/', async (req, res) => {
                 }
 
                 const range = req.headers.range;
-                const audioStreamInfo = await ytdl.getInfo(data.url);
+                const audioStreamInfo = await ytdl.getInfo(data.url, ytdlOptions);
                 
                 if (!range) {
                     res.header('Content-Type', 'audio/mp3');
                     const audio = ytdl(data.url, {
+                        ...ytdlOptions,
                         quality: 'highestaudio',
                         filter: 'audioonly'
                     });
@@ -211,6 +232,7 @@ router.post('/', async (req, res) => {
                 });
 
                 const audio = ytdl(data.url, {
+                    ...ytdlOptions,
                     quality: 'highestaudio',
                     filter: 'audioonly',
                     range: { start, end }
