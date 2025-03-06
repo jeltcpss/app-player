@@ -190,7 +190,7 @@ app.get('/ping', (req, res) => {
 async function keepAlive() {
     try {
         const baseUrl = process.env.RENDER_EXTERNAL_URL 
-            ? `https://${process.env.RENDER_EXTERNAL_URL}`
+            ? `${process.env.RENDER_EXTERNAL_URL}`
             : `http://${host}:${port}`;
             
         console.log('Tentando auto-ping para:', baseUrl);
