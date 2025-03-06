@@ -112,10 +112,24 @@ const ytdlOptions = {
             'Sec-Fetch-Site': 'none',
             'Sec-Fetch-User': '?1',
             'Upgrade-Insecure-Requests': '1',
-            'Cookie': cookiesSalvos
+            'Cookie': cookiesSalvos,
+            'x-youtube-identity-token': process.env.YOUTUBE_IDENTITY_TOKEN || '',
+            'x-client-data': 'CIa2yQEIpbbJAQipncoBCMKTywEIkqHLAQiFoM0BCJmizQEI9KXNAQiFqs0BCJ2uzQEIurHNAQjvs80BCIe0zQEIqbXNARiWwcoB'
         }
     },
-    lang: 'pt-BR'
+    lang: 'pt-BR',
+    highWaterMark: 1024 * 1024 * 2, // 2MB
+    liveBuffer: 20000, // 20 segundos
+    dlChunkSize: 1024 * 1024, // 1MB
+    isHLS: false,
+    // Desabilitar verificações de idade e região
+    requestCallback: (options) => {
+        options.headers = {
+            ...options.headers,
+            'Cookie': cookiesSalvos
+        };
+        return options;
+    }
 };
 
 /**
@@ -184,6 +198,19 @@ async function buscar(termo, limite = 100) {
     }
 }
 
+// Função para verificar se os cookies são válidos
+async function verificarCookies() {
+    try {
+        // Tenta obter informações de um vídeo público do YouTube
+        const videoTeste = 'dQw4w9WgXcQ'; // Video público para teste
+        await ytdl.getBasicInfo(videoTeste, ytdlOptions);
+        return true;
+    } catch (erro) {
+        console.error('Erro na verificação dos cookies:', erro.message);
+        return false;
+    }
+}
+
 // Rota para atualizar cookies
 router.post('/update-cookies', (req, res) => {
     try {
@@ -230,6 +257,15 @@ router.post('/update-cookies', (req, res) => {
 // Rota unificada para todas as operações de música
 router.post('/', async (req, res) => {
     try {
+        // Verificar cookies antes de processar a requisição
+        const cookiesValidos = await verificarCookies();
+        if (!cookiesValidos) {
+            return res.status(401).json({
+                erro: 'Cookies inválidos',
+                detalhes: 'Os cookies do YouTube estão inválidos ou expiraram. Por favor, atualize os cookies.'
+            });
+        }
+
         if (!req.body || !req.body.method || !req.body.data) {
             return res.status(400).json({
                 erro: 'Dados não fornecidos',
