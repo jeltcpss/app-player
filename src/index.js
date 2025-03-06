@@ -6,6 +6,7 @@ import path from 'path'; //importar path
 import { fileURLToPath } from 'url'; //importar fileURLToPath
 import { dirname } from 'path'; //importar dirname
 import { config } from 'dotenv'; //importar dotenv
+import fs from 'fs'; //importar fs
 
 // Carregar variáveis de ambiente do arquivo .env
 config();
@@ -64,12 +65,30 @@ app.use((req, res, next) => {
 app.use(helmet(securityMiddleware.helmet)); //usar helmet
 app.use(express.json(securityMiddleware.bodyParser)); //usar bodyParser
 
+// Configuração do caminho do frontend
+const frontendPath = process.env.NODE_ENV === 'production' 
+    ? path.join(process.cwd(), 'api-de-musica-front')
+    : path.join(__dirname, '../../api-de-musica-front');
+
+console.log('Caminho do frontend:', frontendPath);
+
 // Configuração para servir arquivos estáticos do frontend
-app.use('/app', express.static(path.join(__dirname, '../../api-de-musica-front')));
+app.use('/app', express.static(frontendPath));
 
 // Rota principal do app
 app.get('/app', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../api-de-musica-front/index.html'));
+    const indexPath = path.join(frontendPath, 'index.html');
+    console.log('Tentando servir:', indexPath);
+    
+    if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+    } else {
+        console.error('Arquivo index.html não encontrado em:', indexPath);
+        res.status(404).json({
+            erro: 'Frontend não encontrado',
+            detalhes: 'O arquivo index.html não foi encontrado'
+        });
+    }
 });
 
 // Configuração para confiar em proxies
