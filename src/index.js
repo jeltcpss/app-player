@@ -156,6 +156,34 @@ app.get('/doc', (req, res) => {
     res.sendFile(path.join(__dirname, 'doc', 'index.html'));
 });
 
+// Rota de ping para manter a instância ativa
+app.get('/ping', (req, res) => {
+    const timestamp = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+    console.log(`[${timestamp}] Ping recebido`);
+    res.json({ 
+        status: 'ok',
+        timestamp,
+        uptime: process.uptime()
+    });
+});
+
+// Função para auto-ping
+async function keepAlive() {
+    try {
+        const response = await fetch(`https://${process.env.RENDER_EXTERNAL_URL || 'localhost:' + port}/ping`);
+        const data = await response.json();
+        console.log('Auto-ping realizado:', data);
+    } catch (error) {
+        console.error('Erro no auto-ping:', error.message);
+    }
+}
+
+// Executar o auto-ping a cada 10 minutos
+if (process.env.NODE_ENV === 'production') {
+    setInterval(keepAlive, 600000); // 600000 ms = 10 minutos
+    console.log('Sistema de auto-ping iniciado');
+}
+
 // Rota 404 para endpoints não encontrados
 app.use((req, res) => { //rota para endpoints não encontrados
     res.status(404).json({ //status 404
