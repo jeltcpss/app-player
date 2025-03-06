@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Clone</title>
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='%231DB954' d='M470.4 1.5l-304 96C153.1 101.7 144 114 144 128v264.6c-14.1-5.4-30.5-8.6-48-8.6-53 0-96 28.7-96 64s43 64 96 64 96-28.7 96-64V220.5l272-85.9v194c-14.1-5.4-30.5-8.6-48-8.6-53 0-96 28.7-96 64s43 64 96 64 96-28.7 96-64V32c0-21.7-21.1-37-41.6-30.5z'/></svg>">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- Header fixo com navegação -->
+        <header class="header">
+            <nav class="nav-menu">
+                <ul>
+                    <li class="nav-item" :class="{ active: currentPage === 'home' }" @click="changePage('home')">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </li>
+                    <li class="nav-item" :class="{ active: currentPage === 'search' }" @click="changePage('search')">
+                        <i class="fas fa-search"></i>
+                        <span>Buscar</span>
+                    </li>
+                    <li class="nav-item" :class="{ active: currentPage === 'favorites' }" @click="changePage('favorites')">
+                        <i class="fas fa-heart"></i>
+                        <span>Favoritos</span>
+                    </li>
+                    <li class="nav-item" :class="{ active: currentPage === 'playlists' }" @click="changePage('playlists')">
+                        <i class="fas fa-list"></i>
+                        <span>Playlists</span>
+                    </li>
+                    <li class="nav-item" :class="{ active: currentPage === 'history' }" @click="changePage('history')">
+                        <i class="fas fa-history"></i>
+                        <span>Histórico</span>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- Conteúdo principal -->
+        <main class="content">
+            <div class="content-wrapper">
+                <component :is="currentComponent" :search-state="searchState"></component>
+
+                <!-- Modal de Adicionar à Playlist -->
+                <div class="modal" v-if="showAddToPlaylistModal">
+                    <div class="modal-overlay" @click="showAddToPlaylistModal = false"></div>
+                    <div class="modal-content">
+                        <h3>Adicionar à Playlist</h3>
+                        
+                        <div v-if="!showCreatePlaylistInput">
+                            <div v-if="playlists.length === 0" class="empty-state">
+                                <i class="fas fa-music"></i>
+                                <p>Você ainda não tem playlists</p>
+                                <button class="modal-btn confirm" @click="showCreatePlaylistInput = true">
+                                    Criar Nova Playlist
+                                </button>
+                            </div>
+                            
+                            <div v-else class="playlist-list">
+                                <div v-for="playlist in playlists" 
+                                     :key="playlist.name" 
+                                     class="playlist-item"
+                                     @click="addSongToPlaylist(playlist)">
+                                    <div class="playlist-icon">
+                                        <i class="fas fa-music"></i>
+                                    </div>
+                                    <div class="playlist-name">{{ playlist.name }}</div>
+                                </div>
+                                
+                                <button class="create-new-btn" @click="showCreatePlaylistInput = true">
+                                    <i class="fas fa-plus"></i>
+                                    Criar Nova Playlist
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div v-else class="create-playlist-form">
+                            <div class="modal-input">
+                                <input type="text" 
+                                       v-model="newPlaylistName" 
+                                       placeholder="Nome da playlist"
+                                       @keyup.enter="createAndAddToPlaylist">
+                            </div>
+                            <div class="modal-actions">
+                                <button class="modal-btn cancel" @click="showCreatePlaylistInput = false">
+                                    Cancelar
+                                </button>
+                                <button class="modal-btn confirm" 
+                                        @click="createAndAddToPlaylist"
+                                        :disabled="!newPlaylistName.trim()">
+                                    Criar e Adicionar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer com player fixo -->
+        <footer class="player">
+            <!-- Barra de progresso -->
+            <div class="progress-bar" 
+                 @click="updateProgress"
+                 @mousedown="startDragging">
+                <div class="progress" :style="{ width: progress + '%' }"></div>
+                <div class="time-info">
+                    <span class="current-time">{{ formatTime(currentTime) }}</span>
+                    <span class="total-time">{{ formatTime(duration) }}</span>
+                </div>
+            </div>
+
+            <div class="player-content">
+                <div class="player-wrapper">
+                    <!-- Info da música -->
+                    <div class="track-info">
+                        <div class="album-cover" :class="{ 'no-image': !currentTrack.cover || currentTrack.cover === './assets/images/default-album.png' }">
+                            <img v-if="currentTrack.cover && currentTrack.cover !== './assets/images/default-album.png'" 
+                                :src="currentTrack.cover" 
+                                alt="Capa do álbum">
+                            <i v-else class="fas fa-music"></i>
+                        </div>
+                        <div class="track-details">
+                            <p class="track-name">{{ currentTrack.name }}</p>
+                            <p class="artist-name">{{ currentTrack.artist }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Controles principais -->
+                    <div class="main-controls">
+                        <div class="playback-controls">
+                            <!-- Controles centrais -->
+                            <div class="center-controls">
+                                <div class="main-buttons">
+                                    <button class="control-btn" :class="{ active: shuffle }" @click="toggleShuffle">
+                                        <i class="fas fa-random"></i>
+                                    </button>
+                                    <button class="control-btn" @click="previousTrack">
+                                        <i class="fas fa-step-backward"></i>
+                                    </button>
+                                    <button class="control-btn play-btn" @click="togglePlay">
+                                        <i :class="isPlaying ? 'fas fa-pause' : 'fas fa-play'"></i>
+                                    </button>
+                                    <button class="control-btn" @click="nextTrack">
+                                        <i class="fas fa-step-forward"></i>
+                                    </button>
+                                    <button class="control-btn" @click="toggleRepeat" :class="{ 
+                                        'active': repeatMode === 'all',
+                                        'active-single': repeatMode === 'one'
+                                    }">
+                                        <div class="repeat-icon">
+                                            <i class="fas fa-repeat"></i>
+                                            <span v-if="repeatMode === 'one'" class="repeat-one">1</span>
+                                        </div>
+                                    </button>
+                                </div>
+                                <div class="secondary-buttons">
+                                    <button class="action-btn" :class="{ active: isFavorite }" @click="toggleFavorite">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                    <button class="action-btn" @click="addToPlaylist">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <button class="control-btn" :class="{ active: bluetooth }" @click="toggleBluetooth">
+                                        <i class="fab fa-bluetooth-b"></i>
+                                    </button>
+                                    <button class="download-btn" @click="downloadTrack()">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <div class="volume-control">
+                                        <button class="control-btn" @click="toggleVolumeSlider">
+                                            <i :class="volume > 0 ? 'fas fa-volume-up' : 'fas fa-volume-mute'"></i>
+                                        </button>
+                                        <div class="volume-slider" :class="{ active: showVolumeSlider }">
+                                            <input type="range" v-model="volume" min="0" max="100" @input="updateVolume">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="./assets/js/app.js" type="module"></script>
+</body>
+</html> 

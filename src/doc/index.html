@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentação da API de Música</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+            padding: 10px;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+        }
+        h3 {
+            color: #16a085;
+            margin-top: 20px;
+        }
+        .endpoint {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .method {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        .url {
+            background-color: #f8f9fa;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            color: #2c3e50;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: monospace;
+        }
+        code {
+            color: #16a085;
+            font-family: monospace;
+            background-color: #f8f9fa;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        .description {
+            margin: 10px 0;
+            color: #666;
+        }
+        .note {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Documentação da API de Música</h1>
+    
+    <div class="note">
+        <strong>Nota:</strong> Todas as requisições que necessitam de autenticação devem incluir o ID do usuário.
+    </div>
+
+    <h2>Rotas Principais</h2>
+    
+    <div class="endpoint">
+        <h3>Status da API</h3>
+        <p class="method">GET</p>
+        <p class="url">/</p>
+        <p class="description">Verifica o status da API</p>
+    </div>
+
+    <div class="endpoint">
+        <h3>Documentação</h3>
+        <p class="method">GET</p>
+        <p class="url">/doc</p>
+        <p class="description">Acessa a documentação da API</p>
+    </div>
+
+    <h2>Usuários</h2>
+    
+    <div class="endpoint">
+        <h3>Listar Usuários</h3>
+        <p class="method">POST</p>
+        <p class="url">/users</p>
+        <p class="description">Lista todos os usuários cadastrados</p>
+        <pre>{
+    "method": "list",
+    "data": {}
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Criar Usuário</h3>
+        <p class="method">POST</p>
+        <p class="url">/users</p>
+        <p class="description">Cria um novo usuário</p>
+        <pre>{
+    "method": "create",
+    "data": {
+        "validade_date": "2024-12-31T23:59:59Z"
+    }
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Buscar Usuário</h3>
+        <p class="method">POST</p>
+        <p class="url">/users</p>
+        <p class="description">Busca um usuário específico</p>
+        <pre>{
+    "method": "get",
+    "data": {
+        "user": "id_do_usuario"
+    }
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Atualizar Usuário</h3>
+        <p class="method">POST</p>
+        <p class="url">/users</p>
+        <p class="description">Atualiza os dados de um usuário</p>
+        <pre>{
+    "method": "update",
+    "data": {
+        "user": "id_do_usuario",
+        "user_status": "active",
+        "validade_date": "2024-12-31T23:59:59Z"
+    }
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Deletar Usuário</h3>
+        <p class="method">POST</p>
+        <p class="url">/users</p>
+        <p class="description">Remove um usuário</p>
+        <pre>{
+    "method": "delete",
+    "data": {
+        "user": "id_do_usuario"
+    }
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Informações do Usuário</h3>
+        <p class="method">POST</p>
+        <p class="url">/users</p>
+        <p class="description">Obtém todas as informações de um usuário</p>
+        <pre>{
+    "method": "info",
+    "data": {
+        "user": "id_do_usuario"
+    }
+}</pre>
+    </div>
+
+    <h2>Favoritos</h2>
+    
+    <div class="endpoint">
+        <h3>Listar Favoritos</h3>
+        <p class="method">POST</p>
+        <p class="url">/users/favorites</p>
+        <p class="description">Lista todas as músicas favoritas do usuário</p>
+        <pre>{
+    "method": "list",
+    "data": {
+        "user": "id_do_usuario"
+    }
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Adicionar aos Favoritos</h3>
+        <p class="method">POST</p>
+        <p class="url">/users/favorites</p>
+        <p class="description">Adiciona músicas aos favoritos</p>
+        <pre>{
+    "method": "add",
+    "data": {
+        "user": "id_do_usuario",
+        "songs": [{
+            "id_song": "id_da_musica",
+            "song_name": "Nome da Música",
+            "song_artist": "Artista",
+            "song_duration": 180,
+            "song_thumbnail": "https://exemplo.com/thumb.jpg",
+            "song_url": "https://exemplo.com/video"
+        }]
+    }
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Remover dos Favoritos</h3>
+        <p class="method">POST</p>
+        <p class="url">/users/favorites</p>
+        <p class="description">Remove várias músicas dos favoritos</p>
+        <pre>{
+    "method": "remove",
+    "data": {
+        "user": "id_do_usuario",
+        "song_ids": ["id1", "id2"]
+    }
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Remover uma Música dos Favoritos</h3>
+        <p class="method">POST</p>
+        <p class="url">/users/favorites</p>
+        <p class="description">Remove uma música específica dos favoritos</p>
+        <pre>{
+    "method": "remove_single",
+    "data": {
+        "user": "id_do_usuario",
+        "song_id": "id_da_musica"
+    }
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Top Músicas Favoritas</h3>
+        <p class="method">POST</p>
+        <p class="url">/users/favorites</p>
+        <p class="description">Lista as músicas mais favoritadas</p>
+        <pre>{
+    "method": "top_favorites",
+    "data": {
+        "user": "id_do_usuario"
+    }
+}</pre>
+    </div>
+
+    <h2>Histórico</h2>
+    
+    <div class="endpoint">
+        <h3>Listar Histórico</h3>
+        <p class="method">POST</p>
+        <p class="url">/users/history</p>
+        <p class="description">Lista o histórico de músicas do usuário</p>
+        <pre>{
+    "method": "list",
+    "data": {
+        "user": "id_do_usuario"
+    }
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Adicionar ao Histórico</h3>
+        <p class="method">POST</p>
+        <p class="url">/users/history</p>
+        <p class="description">Adiciona músicas ao histórico</p>
+        <pre>{
+    "method": "add",
+    "data": {
+        "user": "id_do_usuario",
+        "songs": [{
+            "id_song": "id_da_musica",
+            "song_name": "Nome da Música",
+            "song_artist": "Artista",
+            "song_duration": 180,
+            "song_thumbnail": "https://exemplo.com/thumb.jpg",
+            "song_url": "https://exemplo.com/video",
+            "played_at": "2024-03-18T12:00:00Z"
+        }]
+    }
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Remover do Histórico</h3>
+        <p class="method">POST</p>
+        <p class="url">/users/history</p>
+        <p class="description">Remove várias músicas do histórico</p>
+        <pre>{
+    "method": "remove",
+    "data": {
+        "user": "id_do_usuario",
+        "song_ids": ["id1", "id2"]
+    }
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Remover uma Música do Histórico</h3>
+        <p class="method">POST</p>
+        <p class="url">/users/history</p>
+        <p class="description">Remove uma música específica do histórico</p>
+        <pre>{
+    "method": "remove_single",
+    "data": {
+        "user": "id_do_usuario",
+        "song_id": "id_da_musica"
+    }
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Limpar Histórico</h3>
+        <p class="method">POST</p>
+        <p class="url">/users/history</p>
+        <p class="description">Remove todas as músicas do histórico</p>
+        <pre>{
+    "method": "clear",
+    "data": {
+        "user": "id_do_usuario"
+    }
+}</pre>
+    </div>
+
+    <h2>Playlists</h2>
+    
+    <div class="endpoint">
+        <h3>Listar Playlists</h3>
+        <p class="method">POST</p>
+        <p class="url">/users/playlists</p>
+        <p class="description">Lista todas as playlists do usuário</p>
+        <pre>{
+    "method": "list",
+    "data": {
+        "user": "id_do_usuario"
+    }
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Criar Playlist</h3>
+        <p class="method">POST</p>
+        <p class="url">/users/playlists</p>
+        <p class="description">Cria uma nova playlist</p>
+        <pre>{
+    "method": "create",
+    "data": {
+        "user": "id_do_usuario",
+        "name": "Nome da Playlist"
+    }
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Buscar Playlist</h3>
+        <p class="method">POST</p>
+        <p class="url">/users/playlists</p>
+        <p class="description">Busca uma playlist específica</p>
+        <pre>{
+    "method": "get",
+    "data": {
+        "user": "id_do_usuario",
+        "playlist_name": "Nome da Playlist"
+    }
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Adicionar Músicas à Playlist</h3>
+        <p class="method">POST</p>
+        <p class="url">/users/playlists</p>
+        <p class="description">Adiciona músicas a uma playlist</p>
+        <pre>{
+    "method": "add_songs",
+    "data": {
+        "user": "id_do_usuario",
+        "playlist_name": "Nome da Playlist",
+        "songs": [{
+            "id_song": "id_da_musica",
+            "song_name": "Nome da Música",
+            "song_artist": "Artista",
+            "song_duration": 180,
+            "song_thumbnail": "https://exemplo.com/thumb.jpg",
+            "song_url": "https://exemplo.com/video"
+        }]
+    }
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Remover Playlist</h3>
+        <p class="method">POST</p>
+        <p class="url">/users/playlists</p>
+        <p class="description">Remove uma playlist inteira</p>
+        <pre>{
+    "method": "remove_playlist",
+    "data": {
+        "user": "id_do_usuario",
+        "playlist_name": "Nome da Playlist"
+    }
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Remover Músicas da Playlist</h3>
+        <p class="method">POST</p>
+        <p class="url">/users/playlists</p>
+        <p class="description">Remove várias músicas de uma playlist</p>
+        <pre>{
+    "method": "remove_songs",
+    "data": {
+        "user": "id_do_usuario",
+        "playlist_name": "Nome da Playlist",
+        "song_ids": ["id1", "id2"]
+    }
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Remover uma Música da Playlist</h3>
+        <p class="method">POST</p>
+        <p class="url">/users/playlists</p>
+        <p class="description">Remove uma música específica de uma playlist</p>
+        <pre>{
+    "method": "remove_single_song",
+    "data": {
+        "user": "id_do_usuario",
+        "playlist_name": "Nome da Playlist",
+        "song_id": "id_da_musica"
+    }
+}</pre>
+    </div>
+
+    <h2>Músicas</h2>
+    
+    <div class="endpoint">
+        <h3>Buscar Músicas</h3>
+        <p class="method">POST</p>
+        <p class="url">/musicas</p>
+        <p class="description">Busca músicas por termo</p>
+        <pre>{
+    "method": "search",
+    "data": {
+        "termo": "termo_de_busca",
+        "limite": 10
+    }
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Informações do Vídeo</h3>
+        <p class="method">POST</p>
+        <p class="url">/musicas</p>
+        <p class="description">Obtém informações de um vídeo</p>
+        <pre>{
+    "method": "video_info",
+    "data": {
+        "url": "https://www.youtube.com/watch?v=id_do_video"
+    }
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Informações do Áudio</h3>
+        <p class="method">POST</p>
+        <p class="url">/musicas</p>
+        <p class="description">Obtém informações do áudio de um vídeo</p>
+        <pre>{
+    "method": "audio_info",
+    "data": {
+        "url": "https://www.youtube.com/watch?v=id_do_video"
+    }
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Stream de Vídeo</h3>
+        <p class="method">POST</p>
+        <p class="url">/musicas</p>
+        <p class="description">Faz streaming de um vídeo</p>
+        <pre>{
+    "method": "video_stream",
+    "data": {
+        "url": "https://www.youtube.com/watch?v=id_do_video"
+    }
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Stream de Áudio</h3>
+        <p class="method">POST</p>
+        <p class="url">/musicas</p>
+        <p class="description">Faz streaming do áudio de um vídeo</p>
+        <pre>{
+    "method": "audio_stream",
+    "data": {
+        "url": "https://www.youtube.com/watch?v=id_do_video"
+    }
+}</pre>
+    </div>
+</body>
+</html> 

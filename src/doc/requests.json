@@ -1,0 +1,412 @@
+{
+    "base_url": "http://localhost:3000",
+    "rotas_principais": [
+        {
+            "nome": "Status da API",
+            "metodo": "GET",
+            "url": "/",
+            "descricao": "Verifica o status da API",
+            "resposta_exemplo": {
+                "status": "API está funcionando!",
+                "versao": "1.0.0",
+                "ambiente": "development"
+            }
+        },
+        {
+            "nome": "Documentação",
+            "metodo": "GET",
+            "url": "/doc",
+            "descricao": "Acessa a documentação da API"
+        }
+    ],
+    "usuarios": [
+        {
+            "nome": "Listar Usuários",
+            "metodo": "POST",
+            "url": "/users",
+            "descricao": "Lista todos os usuários cadastrados",
+            "corpo": {
+                "method": "list",
+                "data": {}
+            }
+        },
+        {
+            "nome": "Criar Usuário",
+            "metodo": "POST",
+            "url": "/users",
+            "descricao": "Cria um novo usuário",
+            "corpo": {
+                "method": "create",
+                "data": {
+                    "validade_date": "2024-12-31T23:59:59Z"
+                }
+            }
+        },
+        {
+            "nome": "Buscar Usuário",
+            "metodo": "POST",
+            "url": "/users",
+            "descricao": "Busca um usuário específico",
+            "corpo": {
+                "method": "get",
+                "data": {
+                    "user": "id_do_usuario"
+                }
+            }
+        },
+        {
+            "nome": "Atualizar Usuário",
+            "metodo": "POST",
+            "url": "/users",
+            "descricao": "Atualiza os dados de um usuário",
+            "corpo": {
+                "method": "update",
+                "data": {
+                    "user": "id_do_usuario",
+                    "user_status": "active",
+                    "validade_date": "2024-12-31T23:59:59Z"
+                }
+            }
+        },
+        {
+            "nome": "Deletar Usuário",
+            "metodo": "POST",
+            "url": "/users",
+            "descricao": "Remove um usuário",
+            "corpo": {
+                "method": "delete",
+                "data": {
+                    "user": "id_do_usuario"
+                }
+            }
+        },
+        {
+            "nome": "Informações do Usuário",
+            "metodo": "POST",
+            "url": "/users",
+            "descricao": "Obtém todas as informações de um usuário",
+            "corpo": {
+                "method": "info",
+                "data": {
+                    "user": "id_do_usuario"
+                }
+            }
+        }
+    ],
+    "favoritos": [
+        {
+            "nome": "Listar Favoritos",
+            "metodo": "POST",
+            "url": "/users/favorites",
+            "descricao": "Lista todas as músicas favoritas do usuário",
+            "corpo": {
+                "method": "list",
+                "data": {
+                    "user": "id_do_usuario"
+                }
+            }
+        },
+        {
+            "nome": "Adicionar aos Favoritos",
+            "metodo": "POST",
+            "url": "/users/favorites",
+            "descricao": "Adiciona músicas aos favoritos",
+            "corpo": {
+                "method": "add",
+                "data": {
+                    "user": "id_do_usuario",
+                    "songs": [
+                        {
+                            "id_song": "id_da_musica",
+                            "song_name": "Nome da Música",
+                            "song_artist": "Artista",
+                            "song_duration": 180,
+                            "song_thumbnail": "https://exemplo.com/thumb.jpg",
+                            "song_url": "https://exemplo.com/video"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "nome": "Remover dos Favoritos",
+            "metodo": "POST",
+            "url": "/users/favorites",
+            "descricao": "Remove várias músicas dos favoritos",
+            "corpo": {
+                "method": "remove",
+                "data": {
+                    "user": "id_do_usuario",
+                    "song_ids": ["id1", "id2"]
+                }
+            }
+        },
+        {
+            "nome": "Remover uma Música dos Favoritos",
+            "metodo": "POST",
+            "url": "/users/favorites",
+            "descricao": "Remove uma música específica dos favoritos",
+            "corpo": {
+                "method": "remove_single",
+                "data": {
+                    "user": "id_do_usuario",
+                    "song_id": "id_da_musica"
+                }
+            }
+        },
+        {
+            "nome": "Top Músicas Favoritas",
+            "metodo": "POST",
+            "url": "/users/favorites",
+            "descricao": "Lista as músicas mais favoritadas",
+            "corpo": {
+                "method": "top_favorites",
+                "data": {
+                    "user": "id_do_usuario"
+                }
+            }
+        }
+    ],
+    "historico": [
+        {
+            "nome": "Listar Histórico",
+            "metodo": "POST",
+            "url": "/users/history",
+            "descricao": "Lista o histórico de músicas do usuário",
+            "corpo": {
+                "method": "list",
+                "data": {
+                    "user": "id_do_usuario"
+                }
+            }
+        },
+        {
+            "nome": "Adicionar ao Histórico",
+            "metodo": "POST",
+            "url": "/users/history",
+            "descricao": "Adiciona músicas ao histórico",
+            "corpo": {
+                "method": "add",
+                "data": {
+                    "user": "id_do_usuario",
+                    "songs": [
+                        {
+                            "id_song": "id_da_musica",
+                            "song_name": "Nome da Música",
+                            "song_artist": "Artista",
+                            "song_duration": 180,
+                            "song_thumbnail": "https://exemplo.com/thumb.jpg",
+                            "song_url": "https://exemplo.com/video",
+                            "played_at": "2024-03-18T12:00:00Z"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "nome": "Remover do Histórico",
+            "metodo": "POST",
+            "url": "/users/history",
+            "descricao": "Remove várias músicas do histórico",
+            "corpo": {
+                "method": "remove",
+                "data": {
+                    "user": "id_do_usuario",
+                    "song_ids": ["id1", "id2"]
+                }
+            }
+        },
+        {
+            "nome": "Remover uma Música do Histórico",
+            "metodo": "POST",
+            "url": "/users/history",
+            "descricao": "Remove uma música específica do histórico",
+            "corpo": {
+                "method": "remove_single",
+                "data": {
+                    "user": "id_do_usuario",
+                    "song_id": "id_da_musica"
+                }
+            }
+        },
+        {
+            "nome": "Limpar Histórico",
+            "metodo": "POST",
+            "url": "/users/history",
+            "descricao": "Remove todas as músicas do histórico",
+            "corpo": {
+                "method": "clear",
+                "data": {
+                    "user": "id_do_usuario"
+                }
+            }
+        }
+    ],
+    "playlists": [
+        {
+            "nome": "Listar Playlists",
+            "metodo": "POST",
+            "url": "/users/playlists",
+            "descricao": "Lista todas as playlists do usuário",
+            "corpo": {
+                "method": "list",
+                "data": {
+                    "user": "id_do_usuario"
+                }
+            }
+        },
+        {
+            "nome": "Criar Playlist",
+            "metodo": "POST",
+            "url": "/users/playlists",
+            "descricao": "Cria uma nova playlist",
+            "corpo": {
+                "method": "create",
+                "data": {
+                    "user": "id_do_usuario",
+                    "name": "Nome da Playlist"
+                }
+            }
+        },
+        {
+            "nome": "Buscar Playlist",
+            "metodo": "POST",
+            "url": "/users/playlists",
+            "descricao": "Busca uma playlist específica",
+            "corpo": {
+                "method": "get",
+                "data": {
+                    "user": "id_do_usuario",
+                    "playlist_name": "Nome da Playlist"
+                }
+            }
+        },
+        {
+            "nome": "Adicionar Músicas à Playlist",
+            "metodo": "POST",
+            "url": "/users/playlists",
+            "descricao": "Adiciona músicas a uma playlist",
+            "corpo": {
+                "method": "add_songs",
+                "data": {
+                    "user": "id_do_usuario",
+                    "playlist_name": "Nome da Playlist",
+                    "songs": [
+                        {
+                            "id_song": "id_da_musica",
+                            "song_name": "Nome da Música",
+                            "song_artist": "Artista",
+                            "song_duration": 180,
+                            "song_thumbnail": "https://exemplo.com/thumb.jpg",
+                            "song_url": "https://exemplo.com/video"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "nome": "Remover Playlist",
+            "metodo": "POST",
+            "url": "/users/playlists",
+            "descricao": "Remove uma playlist inteira",
+            "corpo": {
+                "method": "remove_playlist",
+                "data": {
+                    "user": "id_do_usuario",
+                    "playlist_name": "Nome da Playlist"
+                }
+            }
+        },
+        {
+            "nome": "Remover Músicas da Playlist",
+            "metodo": "POST",
+            "url": "/users/playlists",
+            "descricao": "Remove várias músicas de uma playlist",
+            "corpo": {
+                "method": "remove_songs",
+                "data": {
+                    "user": "id_do_usuario",
+                    "playlist_name": "Nome da Playlist",
+                    "song_ids": ["id1", "id2"]
+                }
+            }
+        },
+        {
+            "nome": "Remover uma Música da Playlist",
+            "metodo": "POST",
+            "url": "/users/playlists",
+            "descricao": "Remove uma música específica de uma playlist",
+            "corpo": {
+                "method": "remove_single_song",
+                "data": {
+                    "user": "id_do_usuario",
+                    "playlist_name": "Nome da Playlist",
+                    "song_id": "id_da_musica"
+                }
+            }
+        }
+    ],
+    "musicas": [
+        {
+            "nome": "Buscar Músicas",
+            "metodo": "POST",
+            "url": "/musicas",
+            "descricao": "Busca músicas por termo",
+            "corpo": {
+                "method": "search",
+                "data": {
+                    "termo": "termo_de_busca",
+                    "limite": 10
+                }
+            }
+        },
+        {
+            "nome": "Informações do Vídeo",
+            "metodo": "POST",
+            "url": "/musicas",
+            "descricao": "Obtém informações de um vídeo",
+            "corpo": {
+                "method": "video_info",
+                "data": {
+                    "url": "https://www.youtube.com/watch?v=id_do_video"
+                }
+            }
+        },
+        {
+            "nome": "Informações do Áudio",
+            "metodo": "POST",
+            "url": "/musicas",
+            "descricao": "Obtém informações do áudio de um vídeo",
+            "corpo": {
+                "method": "audio_info",
+                "data": {
+                    "url": "https://www.youtube.com/watch?v=id_do_video"
+                }
+            }
+        },
+        {
+            "nome": "Stream de Vídeo",
+            "metodo": "POST",
+            "url": "/musicas",
+            "descricao": "Faz streaming de um vídeo",
+            "corpo": {
+                "method": "video_stream",
+                "data": {
+                    "url": "https://www.youtube.com/watch?v=id_do_video"
+                }
+            }
+        },
+        {
+            "nome": "Stream de Áudio",
+            "metodo": "POST",
+            "url": "/musicas",
+            "descricao": "Faz streaming do áudio de um vídeo",
+            "corpo": {
+                "method": "audio_stream",
+                "data": {
+                    "url": "https://www.youtube.com/watch?v=id_do_video"
+                }
+            }
+        }
+    ]
+} 

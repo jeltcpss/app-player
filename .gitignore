@@ -1,0 +1,34 @@
+# Dependências
+node_modules/
+package-lock.json
+
+# Arquivos de ambiente
+.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Banco de dados SQLite
+banco_de_dados/
+*.sqlite
+*.sqlite3
+
+# Diretório de build/dist
+dist/
+build/
+
+# Arquivos de IDE/Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Outros
+.tmp/
+.temp/ 
