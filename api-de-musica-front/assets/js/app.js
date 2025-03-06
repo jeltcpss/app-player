@@ -1,6 +1,7 @@
 const { createApp } = Vue;
 
 const API_URLS = [
+    'https://app-player.onrender.com',
     'http://jeffingames.duckdns.org:3000',
     'http://localhost:3000',
     'http://127.0.0.1:3000'
@@ -436,7 +437,7 @@ const Search = {
                 console.error('Dados da música inválidos para download');
                 return;
             }
-            
+
             try {
                 console.log('Iniciando download:', trackToDownload.name);
                 
@@ -569,8 +570,8 @@ const Favorites = {
             const track = this.favoritesList[index];
             this.$parent.removeFromFavorites(track).then(success => {
                 if (success) {
-                    this.favoritesList.splice(index, 1);
-                }
+                this.favoritesList.splice(index, 1);
+            }
             });
         },
         async playTrack(track) {
@@ -1676,12 +1677,12 @@ const app = createApp({
         togglePlay() {
             this.isPlaying = !this.isPlaying;
             if (this.audio) {
-                if (this.isPlaying) {
+            if (this.isPlaying) {
                     this.audio.play();
-                    this.startProgressUpdate();
-                } else {
+                this.startProgressUpdate();
+            } else {
                     this.audio.pause();
-                    this.stopProgressUpdate();
+                this.stopProgressUpdate();
                 }
             }
         },
@@ -1848,12 +1849,12 @@ const app = createApp({
         startProgressUpdate() {
             this.stopProgressUpdate();
             if (this.isPlaying && this.audio) {
-                this.updateProgressInterval = setInterval(() => {
+            this.updateProgressInterval = setInterval(() => {
                     if (!this.isDragging) {
                         this.currentTime = Math.floor(this.audio.currentTime);
                         this.progress = (this.currentTime / this.duration) * 100;
-                    }
-                }, 1000);
+                }
+            }, 1000);
             }
         },
         stopProgressUpdate() {
@@ -1882,7 +1883,7 @@ const app = createApp({
                         this.currentPlaylistIndex = newIndex;
                         this.playTrack(this.playlistQueue[this.currentPlaylistIndex]);
                     }
-                } else {
+            } else {
                     // Modo repeat all: vai para a próxima música ou volta para o início
                     if (this.playlistQueue && this.playlistQueue.length > 0) {
                         if (this.currentPlaylistIndex < this.playlistQueue.length - 1) {

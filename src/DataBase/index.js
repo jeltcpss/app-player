@@ -7,14 +7,31 @@ import sqlite3 from 'sqlite3'; //importar sqlite3
 import path from 'path'; //importar path
 import { fileURLToPath } from 'url'; //importar fileURLToPath
 import { z } from 'zod';
+import fs from 'fs';
 
 // Configuração do caminho do banco de dados
 const __filename = fileURLToPath(import.meta.url); //caminho do arquivo
 const __dirname = path.dirname(__filename); //caminho do diretório
 
+// Criar pasta do banco de dados se não existir
+const dbFolder = path.join(__dirname, '../../banco_de_dados');
+if (!fs.existsSync(dbFolder)) {
+    fs.mkdirSync(dbFolder, { recursive: true });
+    console.log('Pasta do banco de dados criada:', dbFolder);
+}
+
 // Configuração do banco de dados
-const dbPath = path.join(__dirname, '../../banco_de_dados/database.sqlite'); //caminho do banco de dados
-const db = new sqlite3.Database(dbPath); //conexão com o banco de dados
+const dbPath = path.join(dbFolder, 'database.sqlite');
+console.log('Caminho do banco de dados:', dbPath);
+
+// Conexão com o banco de dados
+const db = new sqlite3.Database(dbPath, (err) => {
+    if (err) {
+        console.error('Erro ao conectar ao banco de dados:', err);
+    } else {
+        console.log('Conectado ao banco de dados SQLite');
+    }
+});
 
 // Schema para músicas (usado em vários lugares)
 export const Song = z.object({

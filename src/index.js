@@ -25,7 +25,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || process.env.RENDER_PORT || 3000;
+const host = process.env.HOST || '0.0.0.0';
+
+// Log das configurações do servidor
+console.log('Configurações do servidor:');
+console.log(`- Porta: ${port}`);
+console.log(`- Host: ${host}`);
+console.log(`- Ambiente: ${process.env.NODE_ENV || 'development'}`);
+console.log(`- Rate Limiter: ${process.env.RATE_LIMITER_ENABLED === 'true' ? 'Ativado' : 'Desativado'}`);
 
 // Configuração do CORS - Permitir tudo
 app.use(cors({
@@ -170,14 +178,22 @@ process.on('unhandledRejection', (reason, promise) => { //tratamento de promessa
 });
 
 // Iniciar o servidor
-app.listen(port, '0.0.0.0', () => {
-    console.log(`API rodando na porta ${port}`);
-    console.log(`URL local: http://localhost:${port}`);
-    console.log(`Ambiente: ${process.env.NODE_ENV || 'development'}`);
+const server = app.listen(port, host, () => {
+    console.log(`Servidor iniciado em ${new Date().toLocaleString('pt-BR')}`);
+    console.log(`API rodando em http://${host}:${port}`);
+    console.log('Endpoints disponíveis:');
+    console.log('- GET  /         -> Status da API');
+    console.log('- GET  /doc      -> Documentação');
+    console.log('- GET  /app      -> Interface Web');
+    console.log('- POST /users    -> Gerenciamento de usuários');
+    console.log('- POST /musicas  -> Busca e streaming');
 });
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
     console.log('Recebido sinal SIGTERM. Iniciando shutdown graceful...'); //logar o sinal SIGTERM
-    process.exit(0); //encerrar o processo
+    server.close(() => { //encerrar o servidor
+        console.log('Servidor encerrado.'); //logar o encerramento do servidor
+        process.exit(0); //encerrar o processo
+    });
 });
