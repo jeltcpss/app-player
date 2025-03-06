@@ -189,7 +189,13 @@ app.get('/ping', (req, res) => {
 // Função para auto-ping
 async function keepAlive() {
     try {
-        const response = await fetch(`https://${process.env.RENDER_EXTERNAL_URL || 'localhost:' + port}/ping`);
+        const baseUrl = process.env.RENDER_EXTERNAL_URL 
+            ? `https://${process.env.RENDER_EXTERNAL_URL}`
+            : `http://${host}:${port}`;
+            
+        console.log('Tentando auto-ping para:', baseUrl);
+        
+        const response = await fetch(`${baseUrl}/ping`);
         const data = await response.json();
         console.log('Auto-ping realizado:', data);
     } catch (error) {
@@ -197,10 +203,12 @@ async function keepAlive() {
     }
 }
 
-// Executar o auto-ping a cada 10 minutos
+// Executar o auto-ping a cada 5 minutos
 if (process.env.NODE_ENV === 'production') {
-    setInterval(keepAlive, 600000); // 600000 ms = 10 minutos
+    setInterval(keepAlive, 300000); // 300000 ms = 5 minutos
     console.log('Sistema de auto-ping iniciado');
+    // Executar o primeiro ping após 10 segundos
+    setTimeout(keepAlive, 10000);
 }
 
 // Rota 404 para endpoints não encontrados
