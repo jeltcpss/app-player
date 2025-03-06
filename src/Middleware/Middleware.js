@@ -218,63 +218,49 @@ export const validateUser = async (req, res, next) => {
 // - RATE_LIMITER_ENABLED=true (ativa o rate limiter)
 // - RATE_LIMITER_ENABLED=false (desativa o rate limiter)
 export const rateLimiter = {
-    windowMs: 1 * 60 * 1000, // 1 minuto
-    max: 1000000, // 1 milhão de requisições por minuto
-    message: {
-        erro: 'Muitas requisições',
-        detalhes: 'Por favor, aguarde alguns segundos e tente novamente'
-    },
-    standardHeaders: true,
+    windowMs: 1,
+    max: 0,
+    standardHeaders: false,
     legacyHeaders: false,
     skipFailedRequests: true,
-    skipSuccessfulRequests: true, // não contar nenhuma requisição
+    skipSuccessfulRequests: true,
     trustProxy: true,
-    handler: (req, res) => {
-        res.status(429).json({
-            erro: 'Limite de requisições excedido',
-            detalhes: 'Muitas requisições em um curto período. Aguarde alguns segundos.',
-            retry_after: 1 // apenas 1 segundo de espera
-        });
-    },
-    keyGenerator: (req) => {
-        // Chave única para cada requisição
-        return Date.now().toString();
-    },
-    skip: (req) => {
-        // Pular todas as requisições
-        return true;
-    },
-    draft_polli_ratelimit_headers: false,
-    requestWasSuccessful: (req, res) => true // considerar todas requisições como sucesso
+    handler: (req, res, next) => next(),
+    skip: () => true
 };
 
-// Middleware de segurança
+// Middleware de segurança otimizado
 export const securityMiddleware = {
-    // Headers de segurança
     helmet: {
-        contentSecurityPolicy: false, // Desabilitar CSP
+        contentSecurityPolicy: false,
         crossOriginEmbedderPolicy: false,
         crossOriginResourcePolicy: { policy: "cross-origin" },
         crossOriginOpenerPolicy: false,
-        xssFilter: false,
+        dnsPrefetchControl: false,
+        frameguard: false,
+        hidePoweredBy: true,
         hsts: false,
+        ieNoOpen: false,
         noSniff: false,
-        referrerPolicy: false
+        permittedCrossDomainPolicies: false,
+        referrerPolicy: false,
+        xssFilter: false
     },
-    // Aumentar limite de tamanho das requisições
     bodyParser: {
-        limit: '100mb', // aumentado para 100mb
+        limit: '1000mb',
         extended: true,
-        parameterLimit: 100000
+        parameterLimit: 1000000,
+        inflate: true,
+        type: ['application/json', 'application/x-www-form-urlencoded']
     }
 };
 
 // Configuração do CORS otimizada
 export const corsOptions = {
     origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-    exposedHeaders: ['X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset', 'Retry-After'],
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    exposedHeaders: ['X-RateLimit-Limit', 'X-RateLimit-Remaining'],
     credentials: true,
     maxAge: 86400,
     preflightContinue: false,

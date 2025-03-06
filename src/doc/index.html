@@ -3,512 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documentação da API de Música</title>
+    <title>Documentação - API de Música</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
+            margin: 0;
+            padding: 20px;
             color: #333;
+        }
+        .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
         }
-        h1 {
+        h1, h2, h3 {
             color: #2c3e50;
-            text-align: center;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
-        }
-        h2 {
-            color: #2980b9;
-            margin-top: 30px;
-            padding: 10px;
-            background-color: #ecf0f1;
-            border-radius: 5px;
-        }
-        h3 {
-            color: #16a085;
-            margin-top: 20px;
         }
         .endpoint {
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 20px;
+            background: #f8f9fa;
+            padding: 15px;
             margin: 10px 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
         }
         .method {
             font-weight: bold;
             color: #e74c3c;
         }
-        .url {
-            background-color: #f8f9fa;
-            padding: 5px 10px;
-            border-radius: 3px;
-            font-family: monospace;
-            color: #2c3e50;
-        }
         pre {
-            background-color: #f8f9fa;
+            background: #2c3e50;
+            color: #ecf0f1;
             padding: 15px;
             border-radius: 5px;
             overflow-x: auto;
-            font-family: monospace;
         }
         code {
-            color: #16a085;
-            font-family: monospace;
-            background-color: #f8f9fa;
-            padding: 2px 5px;
-            border-radius: 3px;
+            font-family: 'Consolas', monospace;
         }
-        .description {
-            margin: 10px 0;
-            color: #666;
-        }
-        .note {
-            background-color: #fff3cd;
+        .warning {
+            background: #fff3cd;
             border-left: 4px solid #ffc107;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .info {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
             padding: 10px;
             margin: 10px 0;
         }
     </style>
 </head>
 <body>
-    <h1>Documentação da API de Música</h1>
-    
-    <div class="note">
-        <strong>Nota:</strong> Todas as requisições que necessitam de autenticação devem incluir o ID do usuário.
-    </div>
+    <div class="container">
+        <h1>📚 Documentação da API de Música</h1>
+        
+        <div class="info">
+            <strong>Nota:</strong> Esta API não possui limites de uso. Todas as funcionalidades são ilimitadas.
+        </div>
 
-    <h2>Rotas Principais</h2>
-    
-    <div class="endpoint">
-        <h3>Status da API</h3>
-        <p class="method">GET</p>
-        <p class="url">/</p>
-        <p class="description">Verifica o status da API</p>
-    </div>
+        <h2>🌐 Endpoints Base</h2>
+        
+        <div class="endpoint">
+            <span class="method">GET</span> <code>/</code>
+            <p>Verifica o status da API</p>
+            <h4>Resposta:</h4>
+            <pre><code>{
+    "status": "API está funcionando!",
+    "versao": "1.0.0",
+    "ambiente": "production"
+}</code></pre>
+        </div>
 
-    <div class="endpoint">
-        <h3>Documentação</h3>
-        <p class="method">GET</p>
-        <p class="url">/doc</p>
-        <p class="description">Acessa a documentação da API</p>
-    </div>
+        <div class="endpoint">
+            <span class="method">GET</span> <code>/app</code>
+            <p>Interface web do player de música</p>
+        </div>
 
-    <h2>Usuários</h2>
-    
-    <div class="endpoint">
-        <h3>Listar Usuários</h3>
-        <p class="method">POST</p>
-        <p class="url">/users</p>
-        <p class="description">Lista todos os usuários cadastrados</p>
-        <pre>{
-    "method": "list",
-    "data": {}
-}</pre>
-    </div>
-
-    <div class="endpoint">
-        <h3>Criar Usuário</h3>
-        <p class="method">POST</p>
-        <p class="url">/users</p>
-        <p class="description">Cria um novo usuário</p>
-        <pre>{
+        <h2>👤 Gerenciamento de Usuários</h2>
+        
+        <div class="endpoint">
+            <span class="method">POST</span> <code>/users</code>
+            <p>Gerencia usuários do sistema</p>
+            <h4>Métodos disponíveis:</h4>
+            <ul>
+                <li><code>list</code> - Lista todos os usuários</li>
+                <li><code>create</code> - Cria novo usuário</li>
+                <li><code>get</code> - Busca usuário específico</li>
+                <li><code>update</code> - Atualiza dados do usuário</li>
+                <li><code>delete</code> - Remove usuário</li>
+                <li><code>info</code> - Informações completas do usuário</li>
+            </ul>
+            <h4>Exemplo de requisição:</h4>
+            <pre><code>{
     "method": "create",
     "data": {
         "validade_date": "2024-12-31T23:59:59Z"
     }
-}</pre>
-    </div>
+}</code></pre>
+        </div>
 
-    <div class="endpoint">
-        <h3>Buscar Usuário</h3>
-        <p class="method">POST</p>
-        <p class="url">/users</p>
-        <p class="description">Busca um usuário específico</p>
-        <pre>{
-    "method": "get",
-    "data": {
-        "user": "id_do_usuario"
-    }
-}</pre>
-    </div>
-
-    <div class="endpoint">
-        <h3>Atualizar Usuário</h3>
-        <p class="method">POST</p>
-        <p class="url">/users</p>
-        <p class="description">Atualiza os dados de um usuário</p>
-        <pre>{
-    "method": "update",
-    "data": {
-        "user": "id_do_usuario",
-        "user_status": "active",
-        "validade_date": "2024-12-31T23:59:59Z"
-    }
-}</pre>
-    </div>
-
-    <div class="endpoint">
-        <h3>Deletar Usuário</h3>
-        <p class="method">POST</p>
-        <p class="url">/users</p>
-        <p class="description">Remove um usuário</p>
-        <pre>{
-    "method": "delete",
-    "data": {
-        "user": "id_do_usuario"
-    }
-}</pre>
-    </div>
-
-    <div class="endpoint">
-        <h3>Informações do Usuário</h3>
-        <p class="method">POST</p>
-        <p class="url">/users</p>
-        <p class="description">Obtém todas as informações de um usuário</p>
-        <pre>{
-    "method": "info",
-    "data": {
-        "user": "id_do_usuario"
-    }
-}</pre>
-    </div>
-
-    <h2>Favoritos</h2>
-    
-    <div class="endpoint">
-        <h3>Listar Favoritos</h3>
-        <p class="method">POST</p>
-        <p class="url">/users/favorites</p>
-        <p class="description">Lista todas as músicas favoritas do usuário</p>
-        <pre>{
-    "method": "list",
-    "data": {
-        "user": "id_do_usuario"
-    }
-}</pre>
-    </div>
-
-    <div class="endpoint">
-        <h3>Adicionar aos Favoritos</h3>
-        <p class="method">POST</p>
-        <p class="url">/users/favorites</p>
-        <p class="description">Adiciona músicas aos favoritos</p>
-        <pre>{
-    "method": "add",
-    "data": {
-        "user": "id_do_usuario",
-        "songs": [{
-            "id_song": "id_da_musica",
-            "song_name": "Nome da Música",
-            "song_artist": "Artista",
-            "song_duration": 180,
-            "song_thumbnail": "https://exemplo.com/thumb.jpg",
-            "song_url": "https://exemplo.com/video"
-        }]
-    }
-}</pre>
-    </div>
-
-    <div class="endpoint">
-        <h3>Remover dos Favoritos</h3>
-        <p class="method">POST</p>
-        <p class="url">/users/favorites</p>
-        <p class="description">Remove várias músicas dos favoritos</p>
-        <pre>{
-    "method": "remove",
-    "data": {
-        "user": "id_do_usuario",
-        "song_ids": ["id1", "id2"]
-    }
-}</pre>
-    </div>
-
-    <div class="endpoint">
-        <h3>Remover uma Música dos Favoritos</h3>
-        <p class="method">POST</p>
-        <p class="url">/users/favorites</p>
-        <p class="description">Remove uma música específica dos favoritos</p>
-        <pre>{
-    "method": "remove_single",
-    "data": {
-        "user": "id_do_usuario",
-        "song_id": "id_da_musica"
-    }
-}</pre>
-    </div>
-
-    <div class="endpoint">
-        <h3>Top Músicas Favoritas</h3>
-        <p class="method">POST</p>
-        <p class="url">/users/favorites</p>
-        <p class="description">Lista as músicas mais favoritadas</p>
-        <pre>{
-    "method": "top_favorites",
-    "data": {
-        "user": "id_do_usuario"
-    }
-}</pre>
-    </div>
-
-    <h2>Histórico</h2>
-    
-    <div class="endpoint">
-        <h3>Listar Histórico</h3>
-        <p class="method">POST</p>
-        <p class="url">/users/history</p>
-        <p class="description">Lista o histórico de músicas do usuário</p>
-        <pre>{
-    "method": "list",
-    "data": {
-        "user": "id_do_usuario"
-    }
-}</pre>
-    </div>
-
-    <div class="endpoint">
-        <h3>Adicionar ao Histórico</h3>
-        <p class="method">POST</p>
-        <p class="url">/users/history</p>
-        <p class="description">Adiciona músicas ao histórico</p>
-        <pre>{
-    "method": "add",
-    "data": {
-        "user": "id_do_usuario",
-        "songs": [{
-            "id_song": "id_da_musica",
-            "song_name": "Nome da Música",
-            "song_artist": "Artista",
-            "song_duration": 180,
-            "song_thumbnail": "https://exemplo.com/thumb.jpg",
-            "song_url": "https://exemplo.com/video",
-            "played_at": "2024-03-18T12:00:00Z"
-        }]
-    }
-}</pre>
-    </div>
-
-    <div class="endpoint">
-        <h3>Remover do Histórico</h3>
-        <p class="method">POST</p>
-        <p class="url">/users/history</p>
-        <p class="description">Remove várias músicas do histórico</p>
-        <pre>{
-    "method": "remove",
-    "data": {
-        "user": "id_do_usuario",
-        "song_ids": ["id1", "id2"]
-    }
-}</pre>
-    </div>
-
-    <div class="endpoint">
-        <h3>Remover uma Música do Histórico</h3>
-        <p class="method">POST</p>
-        <p class="url">/users/history</p>
-        <p class="description">Remove uma música específica do histórico</p>
-        <pre>{
-    "method": "remove_single",
-    "data": {
-        "user": "id_do_usuario",
-        "song_id": "id_da_musica"
-    }
-}</pre>
-    </div>
-
-    <div class="endpoint">
-        <h3>Limpar Histórico</h3>
-        <p class="method">POST</p>
-        <p class="url">/users/history</p>
-        <p class="description">Remove todas as músicas do histórico</p>
-        <pre>{
-    "method": "clear",
-    "data": {
-        "user": "id_do_usuario"
-    }
-}</pre>
-    </div>
-
-    <h2>Playlists</h2>
-    
-    <div class="endpoint">
-        <h3>Listar Playlists</h3>
-        <p class="method">POST</p>
-        <p class="url">/users/playlists</p>
-        <p class="description">Lista todas as playlists do usuário</p>
-        <pre>{
-    "method": "list",
-    "data": {
-        "user": "id_do_usuario"
-    }
-}</pre>
-    </div>
-
-    <div class="endpoint">
-        <h3>Criar Playlist</h3>
-        <p class="method">POST</p>
-        <p class="url">/users/playlists</p>
-        <p class="description">Cria uma nova playlist</p>
-        <pre>{
-    "method": "create",
-    "data": {
-        "user": "id_do_usuario",
-        "name": "Nome da Playlist"
-    }
-}</pre>
-    </div>
-
-    <div class="endpoint">
-        <h3>Buscar Playlist</h3>
-        <p class="method">POST</p>
-        <p class="url">/users/playlists</p>
-        <p class="description">Busca uma playlist específica</p>
-        <pre>{
-    "method": "get",
-    "data": {
-        "user": "id_do_usuario",
-        "playlist_name": "Nome da Playlist"
-    }
-}</pre>
-    </div>
-
-    <div class="endpoint">
-        <h3>Adicionar Músicas à Playlist</h3>
-        <p class="method">POST</p>
-        <p class="url">/users/playlists</p>
-        <p class="description">Adiciona músicas a uma playlist</p>
-        <pre>{
-    "method": "add_songs",
-    "data": {
-        "user": "id_do_usuario",
-        "playlist_name": "Nome da Playlist",
-        "songs": [{
-            "id_song": "id_da_musica",
-            "song_name": "Nome da Música",
-            "song_artist": "Artista",
-            "song_duration": 180,
-            "song_thumbnail": "https://exemplo.com/thumb.jpg",
-            "song_url": "https://exemplo.com/video"
-        }]
-    }
-}</pre>
-    </div>
-
-    <div class="endpoint">
-        <h3>Remover Playlist</h3>
-        <p class="method">POST</p>
-        <p class="url">/users/playlists</p>
-        <p class="description">Remove uma playlist inteira</p>
-        <pre>{
-    "method": "remove_playlist",
-    "data": {
-        "user": "id_do_usuario",
-        "playlist_name": "Nome da Playlist"
-    }
-}</pre>
-    </div>
-
-    <div class="endpoint">
-        <h3>Remover Músicas da Playlist</h3>
-        <p class="method">POST</p>
-        <p class="url">/users/playlists</p>
-        <p class="description">Remove várias músicas de uma playlist</p>
-        <pre>{
-    "method": "remove_songs",
-    "data": {
-        "user": "id_do_usuario",
-        "playlist_name": "Nome da Playlist",
-        "song_ids": ["id1", "id2"]
-    }
-}</pre>
-    </div>
-
-    <div class="endpoint">
-        <h3>Remover uma Música da Playlist</h3>
-        <p class="method">POST</p>
-        <p class="url">/users/playlists</p>
-        <p class="description">Remove uma música específica de uma playlist</p>
-        <pre>{
-    "method": "remove_single_song",
-    "data": {
-        "user": "id_do_usuario",
-        "playlist_name": "Nome da Playlist",
-        "song_id": "id_da_musica"
-    }
-}</pre>
-    </div>
-
-    <h2>Músicas</h2>
-    
-    <div class="endpoint">
-        <h3>Buscar Músicas</h3>
-        <p class="method">POST</p>
-        <p class="url">/musicas</p>
-        <p class="description">Busca músicas por termo</p>
-        <pre>{
+        <h2>🎵 Gerenciamento de Músicas</h2>
+        
+        <div class="endpoint">
+            <span class="method">POST</span> <code>/musicas</code>
+            <p>Busca e streaming de músicas</p>
+            <h4>Métodos disponíveis:</h4>
+            <ul>
+                <li><code>search</code> - Busca músicas por termo (sem limite de resultados)</li>
+                <li><code>video_info</code> - Informações do vídeo</li>
+                <li><code>audio_info</code> - Informações do áudio</li>
+                <li><code>video_stream</code> - Stream de vídeo (sem limite de duração)</li>
+                <li><code>audio_stream</code> - Stream de áudio (sem limite de duração)</li>
+            </ul>
+            <h4>Exemplo de busca:</h4>
+            <pre><code>{
     "method": "search",
     "data": {
-        "termo": "termo_de_busca",
-        "limite": 10
+        "termo": "nome da música",
+        "limite": 0
     }
-}</pre>
-    </div>
+}</code></pre>
+            <p class="info">Nota: Use limite = 0 para buscar sem restrições</p>
+        </div>
 
-    <div class="endpoint">
-        <h3>Informações do Vídeo</h3>
-        <p class="method">POST</p>
-        <p class="url">/musicas</p>
-        <p class="description">Obtém informações de um vídeo</p>
-        <pre>{
-    "method": "video_info",
-    "data": {
-        "url": "https://www.youtube.com/watch?v=id_do_video"
-    }
-}</pre>
-    </div>
+        <h2>📑 Playlists</h2>
+        
+        <div class="endpoint">
+            <span class="method">POST</span> <code>/users/playlists</code>
+            <p>Gerenciamento de playlists</p>
+            <h4>Métodos disponíveis:</h4>
+            <ul>
+                <li><code>list</code> - Lista todas as playlists</li>
+                <li><code>create</code> - Cria nova playlist</li>
+                <li><code>get</code> - Busca playlist específica</li>
+                <li><code>add_songs</code> - Adiciona músicas (sem limite)</li>
+                <li><code>remove_playlist</code> - Remove playlist</li>
+                <li><code>remove_songs</code> - Remove músicas</li>
+            </ul>
+        </div>
 
-    <div class="endpoint">
-        <h3>Informações do Áudio</h3>
-        <p class="method">POST</p>
-        <p class="url">/musicas</p>
-        <p class="description">Obtém informações do áudio de um vídeo</p>
-        <pre>{
-    "method": "audio_info",
-    "data": {
-        "url": "https://www.youtube.com/watch?v=id_do_video"
-    }
-}</pre>
-    </div>
+        <h2>❤️ Favoritos</h2>
+        
+        <div class="endpoint">
+            <span class="method">POST</span> <code>/users/favorites</code>
+            <p>Gerenciamento de favoritos</p>
+            <h4>Métodos disponíveis:</h4>
+            <ul>
+                <li><code>list</code> - Lista favoritos (sem limite)</li>
+                <li><code>add</code> - Adiciona aos favoritos (sem limite)</li>
+                <li><code>remove</code> - Remove dos favoritos</li>
+                <li><code>remove_single</code> - Remove música específica</li>
+                <li><code>top_favorites</code> - Top músicas favoritas</li>
+            </ul>
+        </div>
 
-    <div class="endpoint">
-        <h3>Stream de Vídeo</h3>
-        <p class="method">POST</p>
-        <p class="url">/musicas</p>
-        <p class="description">Faz streaming de um vídeo</p>
-        <pre>{
-    "method": "video_stream",
-    "data": {
-        "url": "https://www.youtube.com/watch?v=id_do_video"
-    }
-}</pre>
-    </div>
+        <h2>📖 Histórico</h2>
+        
+        <div class="endpoint">
+            <span class="method">POST</span> <code>/users/history</code>
+            <p>Gerenciamento de histórico</p>
+            <h4>Métodos disponíveis:</h4>
+            <ul>
+                <li><code>list</code> - Lista histórico (sem limite)</li>
+                <li><code>add</code> - Adiciona ao histórico (sem limite)</li>
+                <li><code>remove</code> - Remove do histórico</li>
+                <li><code>remove_single</code> - Remove música específica</li>
+                <li><code>clear</code> - Limpa histórico</li>
+            </ul>
+        </div>
 
-    <div class="endpoint">
-        <h3>Stream de Áudio</h3>
-        <p class="method">POST</p>
-        <p class="url">/musicas</p>
-        <p class="description">Faz streaming do áudio de um vídeo</p>
-        <pre>{
-    "method": "audio_stream",
-    "data": {
-        "url": "https://www.youtube.com/watch?v=id_do_video"
-    }
-}</pre>
+        <h2>⚙️ Configurações do Sistema</h2>
+        
+        <div class="success">
+            <h3>Limites do Sistema</h3>
+            <ul>
+                <li>Rate Limit: Desativado</li>
+                <li>Upload: Sem limite de tamanho</li>
+                <li>Timeout: Sem limite de tempo</li>
+                <li>Requisições: Sem limite por IP</li>
+                <li>Conexões: Sem limite por usuário</li>
+                <li>Armazenamento: Limitado apenas pelo disco</li>
+                <li>Streaming: Sem limite de duração</li>
+                <li>Cache: Otimizado automaticamente</li>
+            </ul>
+        </div>
+
+        <div class="warning">
+            <h3>Requisitos</h3>
+            <ul>
+                <li>Node.js 18 ou superior</li>
+                <li>Conexão com internet</li>
+                <li>Cookies do YouTube válidos</li>
+            </ul>
+        </div>
+
+        <div class="info">
+            <h3>Variáveis de Ambiente</h3>
+            <ul>
+                <li><code>PORT</code> - Porta do servidor (padrão: 3000)</li>
+                <li><code>NODE_ENV</code> - Ambiente (development/production)</li>
+                <li><code>RATE_LIMITER_ENABLED</code> - Controle de requisições (padrão: false)</li>
+                <li><code>YOUTUBE_COOKIES</code> - Cookies do YouTube</li>
+                <li><code>MAX_UPLOAD</code> - Tamanho máximo de upload (0 = ilimitado)</li>
+                <li><code>TIMEOUT</code> - Tempo máximo de resposta (0 = ilimitado)</li>
+            </ul>
+        </div>
     </div>
 </body>
 </html> 

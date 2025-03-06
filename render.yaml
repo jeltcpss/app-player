@@ -2,14 +2,65 @@ services:
   - type: web
     name: app-player
     env: node
-    buildCommand: chmod +x build.sh && ./build.sh
+    region: oregon
+    plan: free
+    buildCommand: npm install
     startCommand: node src/index.js
+    healthCheckPath: /ping
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 10000
-      - key: HOST
-        value: 0.0.0.0
       - key: RATE_LIMITER_ENABLED
-        value: false 
+        value: false
+      - key: PORT
+        value: 3000
+      - key: YOUTUBE_COOKIES
+        sync: false
+      - key: MAX_UPLOAD
+        value: 1000
+      - key: TIMEOUT
+        value: 300000
+      - key: NODE_OPTIONS
+        value: "--max-old-space-size=4096"
+    autoDeploy: true
+    disk:
+      name: data
+      mountPath: /data
+      sizeGB: 10
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /app/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+    routes:
+      - type: rewrite
+        source: /app/*
+        destination: /app/index.html
+    scaling:
+      minInstances: 2
+      maxInstances: 5
+      targetMemoryPercent: 85
+      targetCPUPercent: 85
+    httpServer:
+      maxRequestSize: 1000
+      timeout: 300000
+      keepAlive:
+        enabled: true
+        maxRequests: 10000
+        timeout: 300000
+      gzip:
+        enabled: true
+        level: 6
+      http2:
+        enabled: true
+      cors:
+        enabled: true
+        maxAge: 86400 
