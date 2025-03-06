@@ -3,88 +3,8 @@ import yts from 'yt-search';
 import ytdl from '@distube/ytdl-core';
 import fs from 'fs';
 import path from 'path';
-import puppeteer from 'puppeteer';
 
 const router = express.Router();
-
-// Rota para autenticação do YouTube
-router.post('/auth', async (req, res) => {
-    try {
-        const { email, password } = req.body;
-
-        if (!email || !password) {
-            return res.status(400).json({
-                erro: 'Dados incompletos',
-                detalhes: 'Email e senha são obrigatórios'
-            });
-        }
-
-        // Iniciar o navegador em modo headless
-        const browser = await puppeteer.launch({
-            headless: true,
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-accelerated-2d-canvas',
-                '--disable-gpu',
-                '--window-size=1920x1080'
-            ]
-        });
-
-        console.log('Navegador iniciado');
-        const page = await browser.newPage();
-
-        // Configurar viewport e user agent
-        await page.setViewport({ width: 1920, height: 1080 });
-        await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36');
-
-        // Ir para a página de login
-        console.log('Navegando para a página de login...');
-        await page.goto('https://accounts.google.com/signin/v2/identifier?service=youtube');
-
-        // Digitar email
-        console.log('Digitando email...');
-        await page.waitForSelector('input[type="email"]');
-        await page.type('input[type="email"]', email);
-        await page.keyboard.press('Enter');
-
-        // Aguardar e digitar senha
-        console.log('Digitando senha...');
-        await page.waitForSelector('input[type="password"]', { visible: true });
-        await page.type('input[type="password"]', password);
-        await page.keyboard.press('Enter');
-
-        // Aguardar redirecionamento para o YouTube
-        console.log('Aguardando redirecionamento...');
-        await page.waitForNavigation({ waitUntil: 'networkidle0' });
-
-        // Obter cookies
-        console.log('Obtendo cookies...');
-        const cookies = await page.cookies();
-        const cookieString = cookies
-            .map(cookie => `${cookie.name}=${cookie.value}`)
-            .join('; ');
-
-        // Atualizar cookies nas opções do ytdl
-        ytdlOptions.requestOptions.headers.Cookie = cookieString;
-        process.env.YOUTUBE_COOKIES = cookieString;
-
-        await browser.close();
-        console.log('Login concluído com sucesso');
-
-        return res.json({
-            mensagem: 'Login realizado com sucesso',
-            detalhes: 'Os cookies do YouTube foram atualizados'
-        });
-    } catch (erro) {
-        console.error('Erro no processo de autenticação:', erro);
-        return res.status(500).json({
-            erro: 'Erro no processo de autenticação',
-            detalhes: erro.message
-        });
-    }
-});
 
 // Configurações do ytdl para evitar detecção de bot
 const ytdlOptions = {
